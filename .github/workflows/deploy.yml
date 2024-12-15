@@ -1,19 +1,29 @@
-name: Deploy to Vercel
+name: Deploy to Cloudflare Workers
 
-on:
-  push:
-    branches:
-      - main  # Main branch par push hone par deploy karega
-  workflow_dispatch:  # Manually deploy karne ke liye
+on: 
+  workflow_dispatch:
+      
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    name: Deploy
     steps:
-      - uses: actions/checkout@v4  # Repository ka code checkout karna
-      - name: Install Vercel CLI
-        run: npm install -g vercel  # Vercel CLI install karna
-      - name: Deploy to Vercel
+      - uses: actions/checkout@v4
+      - name: Deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          secrets: |
+            BOT_TOKEN
+            BOT_USERNAME
+            EMOJI_LIST
+            RANDOM_LEVEL
+            RESTRICTED_CHATS
         env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}  # Vercel secret token
-        run: vercel --prod --token $VERCEL_TOKEN
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
+          EMOJI_LIST: ${{ secrets.EMOJI_LIST }}
+          RANDOM_LEVEL: ${{ secrets.RANDOM_LEVEL }}
+          RESTRICTED_CHATS: ${{ secrets.RESTRICTED_CHATS }}
